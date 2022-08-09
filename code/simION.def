@@ -1,0 +1,72 @@
+Bootstrap: docker
+From: nvidia/cuda:11.7.0-devel-ubuntu20.04
+
+%labels
+  maintainer Lukas
+
+%post
+    # update the package lists and install some basics
+    apt-get update
+    # installs that need some prompt evasion
+    DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
+    DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+    # install some other basics
+    apt-get install -y wget curl apt-transport-https gnupg python3 python3-pip git python3.8-venv
+    # grab and add the public key for the ONT repos
+    wget -O ont_key https://mirror.oxfordnanoportal.com/apt/ont-repo.pub
+    apt-key add ont_key
+    # add the repository to the sources and update lists
+    echo "deb http://mirror.oxfordnanoportal.com/apt focal-stable non-free" | tee /etc/apt/sources.list.d/nanoporetech.sources.list
+    apt-get update
+    # install ONT's software - and a huge dependency tree
+    apt-get install -y minknow-core-minion-nc ont-kingfisher-ui-minion ont-bream4-minion ont-configuration-customer-minion ont-jwt-auth ont-vbz-hdf-plugin
+    apt-get install -y ont-guppy
+    # change config for GPU live basecalling with guppy
+    /opt/ont/minknow/bin/config_editor --conf application --filename /opt/ont/minknow/conf/app_conf --set guppy.server_config.server_executable="/opt/ont/guppy/bin/guppy_basecall_server" --set guppy.client_executable="/opt/ont/guppy/bin/guppy_basecall_client" --set guppy.server_config.gpu_calling=1 --set guppy.server_config.num_threads=16 --set guppy.server_config.ipc_threads=2
+    # the bulk file needs to be bind mounted when the container is invoked
+    sed -i '/\[custom_settings\]/a simulation="/data/PLSP57501_20170308_FNFAF14035_MN16458_sequencing_run_NOTT_Hum_wh1rs2_60428.fast5"' /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
+    sed -i 's/break_reads_after_seconds\ =\ 1.0/break_reads_after_seconds\ =\ 0.4/' /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
+    
+    # install readfish TODO
+    python3 -m venv bossruns
+    source bossruns/bin/activate
+    pip install --upgrade pip
+    pip install git+https://github.com/nanoporetech/read_until_api@v3.0.0
+    pip install git+https://github.com/LooseLab/readfish@issue208
+    apt list --installed ont-guppy* | tail -n 1 | cut -f2 -d' ' | cut -f1 -d'-' >guppy_version
+    pip install ont_pyguppy_client_lib==$(cat guppy_version)  
+
+    # install additional python dependencies for BR
+    # the rest is installed by readfish already
+    pip3 install natsort scipy numba
+    # pull BR repository
+    git clone https://github.com/goldman-gp-ebi/BOSS-RUNS.git
+
+    # download a reference for the playback run - only use 1 chrom
+    mkdir ref
+    wget -O ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz http://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
+    gunzip ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
+    # permissions of config files - to make them writable at runtime
+    chmod a+w /opt/ont/minknow/conf/app_conf
+    chmod a+w /opt/ont/minknow/conf/user_conf
+    chmod a+w /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
+   
+
+
+
+%runscript
+    # change output directory of minknow in config - does not make sense to do during post
+    /opt/ont/minknow/bin/config_editor --conf user --filename /opt/ont/minknow/conf/user_conf --set output_dirs.logs="logs" --set output_dirs.base="$(pwd)/minknow_run"
+    # for runtime, launch the minknow and guppy servers
+    /opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
+    /usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
+    # and start a sequencing run via the api
+    python3 /code/start_minknow_run.py --position MS00000 --kit SQK-RAD004 --fast5
+
+
+    
+%environment
+  export LC_ALL=en_GB.UTF-8
+  export LANG=en_GB.UTF-8
+  export LC_COLLATE=C
+  
