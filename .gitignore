@@ -1,6 +1,9 @@
 # singularity associated files
-.img
-.sif
+*.img
+*.sif
+
+# pycharm
+.idea/
 
 
 # Byte-compiled / optimized / DLL files
@@ -75,3 +78,5 @@ ENV/
 env.bak/
 venv.bak/
 
+/readfish/
+/data/
