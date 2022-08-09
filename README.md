@@ -1,14 +1,18 @@
 # simION
 
+
+TEST
+
+
 # Acknowledgements
 
 Crucial resources: 
 
 [Miles Benton's](https://github.com/sirselim) guides for live GPU basecalling:
 
-- https://hackmd.io/@Miles/ryVAI_KWF#install-MinKNOW-and-required-packages
+* https://hackmd.io/@Miles/ryVAI_KWF#install-MinKNOW-and-required-packages
 
-- https://github.com/sirselim/jetson_nanopore_sequencing/blob/main/live_basecalling.md
+* https://github.com/sirselim/jetson_nanopore_sequencing/blob/main/live_basecalling.md
 
 starting a head-less sequencing run:
 
