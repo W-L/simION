@@ -26,23 +26,21 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
     # the bulk file needs to be bind mounted when the container is invoked
     sed -i '/\[custom_settings\]/a simulation="/data/PLSP57501_20170308_FNFAF14035_MN16458_sequencing_run_NOTT_Hum_wh1rs2_60428.fast5"' /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
     sed -i 's/break_reads_after_seconds\ =\ 1.0/break_reads_after_seconds\ =\ 0.4/' /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
-    
-    # install readfish TODO
+    # install readfish
     python3 -m venv bossruns
-    source bossruns/bin/activate
+    . bossruns/bin/activate
     pip install --upgrade pip
     pip install git+https://github.com/nanoporetech/read_until_api@v3.0.0
     pip install git+https://github.com/LooseLab/readfish@issue208
     apt list --installed ont-guppy* | tail -n 1 | cut -f2 -d' ' | cut -f1 -d'-' >guppy_version
-    pip install ont_pyguppy_client_lib==$(cat guppy_version)  
-
+    pip install ont_pyguppy_client_lib==$(cat guppy_version)
     # install additional python dependencies for BR
     # the rest is installed by readfish already
     pip3 install natsort scipy numba toml
     # pull BR repository
     git clone https://github.com/goldman-gp-ebi/BOSS-RUNS.git
-
     # download a reference for the playback run - only use 1 chrom
+    # TODO bind mount instead sonce readfish needs mmi anyway
     mkdir ref
     wget -O ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz http://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
     gunzip ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
@@ -55,15 +53,18 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
 
 
 %runscript
-    # change output directory of minknow in config - does not make sense to do during post
-    /opt/ont/minknow/bin/config_editor --conf user --filename /opt/ont/minknow/conf/user_conf --set output_dirs.logs="logs" --set output_dirs.base="$(pwd)/minknow_run"
-    # for runtime, launch the minknow and guppy servers
-    /opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
-    /usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
-    # and start a sequencing run via the api
-    source bossruns/bin/activate
-    python3 /code/start_minknow_run.py --position MS00000 --kit SQK-RAD004 --fast5
-
+# change output directory of minknow in config - does not make sense to do during post
+/opt/ont/minknow/bin/config_editor --conf user --filename /opt/ont/minknow/conf/user_conf --set output_dirs.logs="logs" --set output_dirs.base="$(pwd)/minknow_run"
+/opt/ont/minknow/bin/config_editor --conf application --filename /opt/ont/minknow/conf/app_conf --set guppy.connection.server_ipc_file="$(pwd)/5555"
+# for runtime, launch the minknow and guppy servers
+/opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
+/usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
+# load the venv and start a sequencing run via the api
+source /bossruns/bin/activate
+# remove --fastq and --basecalling for playback without live basecalling
+python3 /code/start_minknow_run.py --position MS00000 --kit SQK-RAD004 --fast5 --fastq --basecalling
+# this is the main log file of the minknow server
+less minknow_run/logs/MS00000/control_server_log-0.txt
 
     
 %environment
