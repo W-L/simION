@@ -38,7 +38,7 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
 
     # install additional python dependencies for BR
     # the rest is installed by readfish already
-    pip3 install natsort scipy numba
+    pip3 install natsort scipy numba toml
     # pull BR repository
     git clone https://github.com/goldman-gp-ebi/BOSS-RUNS.git
 
@@ -61,6 +61,7 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
     /opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
     /usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
     # and start a sequencing run via the api
+    source bossruns/bin/activate
     python3 /code/start_minknow_run.py --position MS00000 --kit SQK-RAD004 --fast5
 
 
