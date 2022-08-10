@@ -2,7 +2,7 @@ import minknow_api
 import numpy as np
 from google.protobuf.json_format import MessageToDict
 import argparse
-
+from types import SimpleNamespace
 
 
 def setup_parser():
@@ -11,7 +11,8 @@ def setup_parser():
     parser.add_argument('--min', type=int, default=0)
     parser.add_argument('--step', type=int, default=128)
     parser.add_argument('--max', type=int, default=9984)
-    parser.add_argument('--symbols', type=int, default=128)
+    parser.add_argument('--symbols', type=int, default=70)
+    parser.add_argument('--show_counts', type=int, default=0)
     return parser
 
 
@@ -47,7 +48,9 @@ def grab_histogram_data(c, data_selection=None):
 
 
 
-def ascii_hist_values(cutoffs, counts, max_symbols=50):
+def ascii_hist_values(cutoffs, counts, max_symbols=50, show_counts=False):
+    # inspired by https://gist.github.com/bgbg/608d9ef4fd75032731651257fe67fc81
+    # by Boris Gorelik; License MIT
     # output is collected as lines in a list
     ret = []
     # cutoffs are the bin borders of the histogram
@@ -56,6 +59,9 @@ def ascii_hist_values(cutoffs, counts, max_symbols=50):
     counts = np.asarray(counts)
     # total number of counts
     total = sum(counts)
+    # transform to yield
+    if not show_counts:
+        counts = counts * cutoffs
     # normalise counts for display
     norm_counts = counts.astype(float) / counts.sum()
     # scale such that highest bar has max_symbols
@@ -75,10 +81,12 @@ def ascii_hist_values(cutoffs, counts, max_symbols=50):
 
 parser = setup_parser()
 args = parser.parse_args()
+# args = SimpleNamespace(pos=0, min=0, step=128, max=10000, symbol=70)
+
 
 connection = connect2device(pos=args.pos)
 cutoffs, counts = grab_histogram_data(c=connection, data_selection=(args.min, args.step, args.max))
-h = ascii_hist_values(cutoffs=cutoffs, counts=counts, max_symbols=args.symbols)
+h = ascii_hist_values(cutoffs=cutoffs, counts=counts, max_symbols=args.symbols, show_counts=args.show_counts)
 print(h)
 
 
