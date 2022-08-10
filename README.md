@@ -30,7 +30,17 @@ singularity exec docker://ubuntu:18.04 bash -c "mkdir -p overlay/upper overlay/w
 ```
 
 
+## Required data
 
+The container does not have all files included to make it smaller.
+These files need to be bind mounted when running the container:
+
+- bulkfile for playback
+- minimap-index of the used reference
+
+
+e.g.: store all files in `./data` and mount with argument `-B data/:/data`. 
+This makes the files available in the container at `/data`.
 
 
 ## Usage
@@ -41,7 +51,8 @@ For now, launch a shell with:
 
 - `--nv` to load GPU drivers
 - `--overlay overlay.img` add the overlay file system
-- `-B` bind mount the bulk file and the scripts directory
+- `-B` bind mount the data and code directories
+
 
 ```shell
 singularity shell --nv -B data/:/data -B code/:/code --overlay overlay.img simION.sif
