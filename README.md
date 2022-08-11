@@ -58,6 +58,7 @@ For now, launch a shell with:
 singularity shell --nv -B data/:/data -B code/:/code --overlay overlay.img simION.sif
 ```
 
+then run the `%runscript` portion manually in the shell
 
 
 ## Other bits and log files
@@ -65,6 +66,8 @@ singularity shell --nv -B data/:/data -B code/:/code --overlay overlay.img simIO
 log of the sequencing protocol
 `less minknow_run/logs/MS00000/control_server_log-0.txt`
 
+fastq drop-off
+`l minknow_run/no_group/no_sample/20220811_1701_MS00000__b3e4edf9/fastq_pass/`
 
 
 ## Acknowledgements
