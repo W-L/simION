@@ -29,10 +29,11 @@ print()
 
 
 while True:
+    current_info = c.protocol.get_current_protocol_run()
     cphase = phase_dict[current_info.phase]
     print(cphase)
     if cphase != "PHASE_SEQUENCING":
-        sleep(5)
+        sleep(10)
     else:
         sys.exit()
 
