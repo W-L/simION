@@ -69,6 +69,10 @@ log of the sequencing protocol
 fastq drop-off
 `l minknow_run/no_group/no_sample/20220811_1701_MS00000__b3e4edf9/fastq_pass/`
 
+## TODO
+
+- tune guppy parameters for GPU
+
 
 ## Acknowledgements
 
