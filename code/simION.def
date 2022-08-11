@@ -56,15 +56,24 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
 # change output directory of minknow in config - does not make sense to do during post
 /opt/ont/minknow/bin/config_editor --conf user --filename /opt/ont/minknow/conf/user_conf --set output_dirs.logs="logs" --set output_dirs.base="$(pwd)/minknow_run"
 /opt/ont/minknow/bin/config_editor --conf application --filename /opt/ont/minknow/conf/app_conf --set guppy.connection.server_ipc_file="$(pwd)/5555"
+# edit toml file for host - replace host line with port sitting at pwd
+sed -i "s#.*host.*#host\ =\ \"ipc://$(pwd)\"#" code/human_chr_selection.toml
 # for runtime, launch the minknow and guppy servers
 /opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
+sleep 10
 /usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
 # load the venv and start a sequencing run via the api
 source /bossruns/bin/activate
 # remove --fastq and --basecalling for playback without live basecalling
 python3 /code/start_minknow_run.py --position MS00000 --kit SQK-RAD004 --fast5 --fastq --basecalling
-# this is the main log file of the minknow server
-less minknow_run/logs/MS00000/control_server_log-0.txt
+# wait until actual sequencing has started
+python3 /code/query_minknow_run.py
+# launch readfish
+# unblock specific targets - BASECALLING NEEDED
+readfish targets --device MS00000 --experiment-name "rf001" --toml code/human_chr_selection.toml --log-file ru_test.log
+
+
+
 
     
 %environment
