@@ -1,6 +1,6 @@
 [caller_settings]
 config_name = "dna_r9.4.1_450bps_fast"
-host = "127.0.0.1"
+host = "ipc:///nfs/research/goldman/lukasw/simION"
 port = 5555
 
 [conditions]
