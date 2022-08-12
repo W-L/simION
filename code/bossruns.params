@@ -1,0 +1,5 @@
+--run_name select_c20
+--ref /ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa
+--ref_idx /ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.mmi
+--device MS00000
+--testing
