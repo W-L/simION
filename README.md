@@ -36,7 +36,7 @@ The container does not have all files included to make it smaller.
 These files need to be bind mounted when running the container:
 
 - bulkfile for playback
-- minimap-index of the used reference
+- fasta and minimap-index of the used reference
 
 
 e.g.: store all files in `./data` and mount with argument `-B data/:/data`. 
