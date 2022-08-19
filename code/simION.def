@@ -39,11 +39,6 @@ From: nvidia/cuda:11.7.0-devel-ubuntu20.04
     pip3 install natsort scipy numba toml
     # pull BR repository
     git clone https://github.com/goldman-gp-ebi/BOSS-RUNS.git
-    # download a reference for the playback run - only use 1 chrom
-    mkdir ref
-    wget -O ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz http://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
-    gunzip ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
-    python BOSS-RUNS/scripts/mappy_index_fasta.py ref/Homo_sapiens.GRCh38.dna.chromosome.20.fa
     # permissions of config files - to make them writable at runtime
     chmod a+w /opt/ont/minknow/conf/app_conf
     chmod a+w /opt/ont/minknow/conf/user_conf
