@@ -9,7 +9,7 @@ sed -i "s#.*host.*#host\ =\ \"ipc://$(pwd)\"#" code/human_chr_selection.toml
 /opt/ont/minknow/bin/mk_manager_svc --simulated-minion-devices 1 -d &
 sleep 10
 echo "Initiated minknow server"
-/usr/bin/guppy_basecall_server --log_path /var/log/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
+/usr/bin/guppy_basecall_server --log_path /minknow_run/logs/guppy --config dna_r9.4.1_450bps_fast.cfg --port 5555 -x cuda:all &
 sleep 5
 echo "Initiated guppy server"
 # load the venv and start a sequencing run via the api
