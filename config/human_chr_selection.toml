@@ -1,0 +1,21 @@
+[caller_settings]
+config_name = "dna_r9.4.1_450bps_fast"
+host = "ipc:///nfs/research/goldman/lukasw/simION"
+port = 5555
+
+[conditions]
+reference = "data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.mmi"
+
+[conditions.0]
+name = "select_c20"
+control = false
+min_chunks = 0
+max_chunks = 12
+targets = ["20"]
+single_on = "stop_receiving"
+multi_on = "stop_receiving"
+single_off = "unblock"
+multi_off = "unblock"
+no_seq = "proceed"
+no_map = "proceed"
+mask = "bossruns_select_c20/masks"

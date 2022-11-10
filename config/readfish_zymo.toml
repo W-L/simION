@@ -1,0 +1,38 @@
+[caller_settings]
+config_name = "dna_r9.4.1_450bps_fast"
+host = "ipc:///nfs/research/goldman/lukasw/simION"
+port = 5555
+
+[conditions]
+reference = ""
+
+
+[conditions.0]
+name = "control"
+control = true
+min_chunks = 0
+max_chunks = 2
+targets = []
+single_on = "stop_receiving"
+multi_on = "unblock"
+single_off = "unblock"
+multi_off = "unblock"
+no_seq = "unblock"
+no_map = "unblock"
+
+
+
+[conditions.1]
+name = "zymolive"
+control = false
+min_chunks = 0
+max_chunks = 2
+targets = []
+single_on = "stop_receiving"
+multi_on = "stop_receiving"
+single_off = "unblock"
+multi_off = "unblock"
+no_seq = "proceed"
+no_map = "stop_receiving"
+mask = "out_zymolive/masks"
+contigs = "out_zymolive/contigs"

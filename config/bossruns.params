@@ -1,0 +1,6 @@
+--run_name select_c20
+--ref /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa
+--ref_idx /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.mmi
+--reject_refs 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,X,Y,MT
+--device MS00000
+--testing

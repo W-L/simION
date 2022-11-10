@@ -1,0 +1,18 @@
+output_path = "icarust_fast5/"
+global_mean_read_length = 20000
+random_seed = 1
+
+[parameters]
+sample_name = "zymo"
+experiment_name = "icarust_zymo"
+flowcell_name = "FAQ1234"
+experiment_duration_set = 4800
+device_id = "I001"
+position = "P001"
+
+[[sample]]
+name = "zymo"
+input_genome = "NC_002516.2.squiggle.npy"
+mean_read_length = 20000
+weight = 1
+
