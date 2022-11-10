@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: nvidia/cuda:11.6.1-base-ubuntu20.04
+
+%labels
+  maintainer W-L
+
+%post
+    # update the package lists and install some basics
+    apt-get update
+    # installs that need some prompt evasion
+    DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
+    DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+    # install some other basics
+    apt-get install -y wget less git nano
+    # grab and add the public key for the ONT repos
+    wget -O ont_key https://mirror.oxfordnanoportal.com/apt/ont-repo.pub
+    apt-key add ont_key
+    # add the repository to the sources and update lists
+    echo "deb http://mirror.oxfordnanoportal.com/apt focal-stable non-free" | tee /etc/apt/sources.list.d/nanoporetech.sources.list
+    apt-get update
+    # install ONT's software - and a huge dependency tree
+    # apt-get install -y minknow-core-minion-nc ont-guppy ont-kingfisher-ui-minion ont-configuration-customer-minion ont-vbz-hdf-plugin
+    apt-get install -y minion-nc-gpu
+    apt-get install -y python3-venv python3-pip
+
+    # permissions of config files - to make them writable at runtime
+    chmod a+w /opt/ont/minknow/conf/app_conf
+    chmod a+w /opt/ont/minknow/conf/user_conf
+    chmod a+w /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
+
+
+
+
+
+
+
+
+
+
