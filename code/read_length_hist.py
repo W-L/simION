@@ -2,18 +2,17 @@ import minknow_api
 import numpy as np
 from google.protobuf.json_format import MessageToDict
 import argparse
-from types import SimpleNamespace
 
 
 def setup_parser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--pos', type=int, default=0)
-    parser.add_argument('--min', type=int, default=0)
-    parser.add_argument('--step', type=int, default=128)
-    parser.add_argument('--max', type=int, default=9984)
-    parser.add_argument('--symbols', type=int, default=70)
-    parser.add_argument('--show_counts', type=int, default=1)
-    return parser
+    pars = argparse.ArgumentParser()
+    pars.add_argument('--pos', type=int, default=0)
+    pars.add_argument('--min', type=int, default=0)
+    pars.add_argument('--step', type=int, default=128)
+    pars.add_argument('--max', type=int, default=9984)
+    pars.add_argument('--symbols', type=int, default=70)
+    pars.add_argument('--show_counts', type=int, default=1)
+    return pars
 
 
 def connect2device(pos=0):
@@ -76,17 +75,21 @@ def ascii_hist_values(cutoffs, counts, max_symbols=50, show_counts=False):
     ret.append("{:>8s} | {:<7,d}".format('N=', total))
     return '\n'.join(ret)
 
-#%%
 
 
-parser = setup_parser()
-args = parser.parse_args()
-# args = SimpleNamespace(pos=0, min=0, step=128, max=10000, symbol=70)
+def main():
+    # get arguments
+    parser = setup_parser()
+    args = parser.parse_args()
+    # collect data
+    connection = connect2device(pos=args.pos)
+    cut_offs, cnts = grab_histogram_data(c=connection, data_selection=(args.min, args.step, args.max))
+    h = ascii_hist_values(cutoffs=cut_offs, counts=cnts, max_symbols=args.symbols, show_counts=args.show_counts)
+    # print histogram
+    print(h)
 
 
-connection = connect2device(pos=args.pos)
-cutoffs, counts = grab_histogram_data(c=connection, data_selection=(args.min, args.step, args.max))
-h = ascii_hist_values(cutoffs=cutoffs, counts=counts, max_symbols=args.symbols, show_counts=args.show_counts)
-print(h)
 
+if __name__ == "__main__":
+    main()
 
