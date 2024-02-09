@@ -12,8 +12,6 @@
 ```shell
 sudo singularity build -F icarust.sif code/icarust.def
 scp icarust.sif lukasw@codon:/nfs/research/goldman/lukasw/simION
-
-singularity shell --nv -B data/:/data -B code/:/code --overlay overlay_aeons.img icarust_ont.sif
 ````
 
 
@@ -33,7 +31,8 @@ might need some edits before compilation
 ```shell
 interact_gpu_vhi
 source ~/.bash_aliases
-alias l="ls -Flh --color"
+singularity shell --nv -B /nfs/research/goldman/lukasw/aeons/Aeons/:/Aeons --overlay overlay_aeons.img icarust.sif
+
 ```
 
 
