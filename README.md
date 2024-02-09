@@ -54,7 +54,7 @@ To save output data, use an overlay file system (host FS is read-only in singula
 
 
 ```shell
-singularity shell --nv -B ../BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
+singularity shell --nv -B ../BR/BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
 ```
 
 Install the readfish environment and some extra dependencies for BOSS*
@@ -113,7 +113,7 @@ sed -i '/\[custom_settings\]/a simulation="/path/to/bulkfile.fast5"' /opt/ont/mi
 bsub -q gpu-a100 -gpu "num=1:gmem=8000" -M 16G -n 4 -Is $SHELL
 module load singularity-3.8.7-gcc-11.2.0-jtpp6xx
 # enter container with mounting code etc.
-singularity shell --nv -B ../bossruns/BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
+singularity shell --nv -B ../BR/BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
 alias l="ls -Flh --color" && alias les="less -S"
 ./bin/micromamba shell init --shell bash --root-prefix=~/micromamba && eval "$(./bin/micromamba shell hook --shell bash -p ~/micromamba)" && micromamba activate readfish
 cd testing
