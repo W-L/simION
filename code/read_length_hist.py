@@ -12,7 +12,7 @@ def setup_parser():
     parser.add_argument('--step', type=int, default=128)
     parser.add_argument('--max', type=int, default=9984)
     parser.add_argument('--symbols', type=int, default=70)
-    parser.add_argument('--show_counts', type=int, default=0)
+    parser.add_argument('--show_counts', type=int, default=1)
     return parser
 
 
