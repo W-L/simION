@@ -1,3 +1,7 @@
+minknow_run/
+/dump/
+doc/
+
 # singularity associated files
 *.img
 *.sif
