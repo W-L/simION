@@ -34,6 +34,9 @@ From: nvidia/cuda:11.8.0-base-ubuntu22.04
     chmod a+w /opt/ont/minknow/conf/user_conf
     chmod a+w /opt/ont/minknow/conf/package/sequencing/sequencing_MIN106_DNA.toml
 
+    # reduce size of the container - don't need sup basecalling
+    rm /opt/ont/guppy/data/*_sup*
+
 
 
 
