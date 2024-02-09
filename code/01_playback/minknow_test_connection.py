@@ -1,12 +1,11 @@
 from minknow_api.manager import Manager
 
 """
-this is a minimal version of what aeons uses to connect to minknow
+this is a minimal version of what BOSS* uses to connect to minknow. For testing only
 """
 
 device = "MS00000"
-# port = 10000
-manager = Manager(host="localhost") # , port=port)
+manager = Manager(host="localhost")
 
 # Find a list of currently available sequencing positions.
 positions = list(manager.flow_cell_positions())
