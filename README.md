@@ -57,31 +57,12 @@ To save output data, use an overlay file system (host FS is read-only in singula
 singularity shell --nv -B ../BR/BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
 ```
 
-Install the readfish environment and some extra dependencies for BOSS*
+Install boss-runs (incl readfish and some extra dependencies)
 
 
 ```shell
-# installation of readfish: write conda yaml from the README of their repository to file
-cat <<EOT > readfish-boss.yml
-name: readfish
-channels:
-  - bioconda
-  - conda-forge
-  - defaults
-dependencies:
-  - python=3.10
-  - pip
-  - pip:
-    - readfish[all]
-EOT
-```
-
-```shell
-# create environment for readfish and BOSS*
-micromamba env create -f readfish-boss.yml -y
-micromamba activate readfish
-# install additional dependencies for BOSS*, that are not already required by readfish
-micromamba install -y gfatools minimap2 miniasm bottleneck scipy numba -c bioconda -c conda-forge -c defaults
+micromamba create -n boss python=3.10 pip gfatools minimap2 miniasm && micromamba activate boss
+pip install dist/boss_runs-0.1.0-py3-none-any.whl
 ```
 
 
@@ -110,12 +91,13 @@ sed -i '/\[custom_settings\]/a simulation="/path/to/bulkfile.fast5"' /opt/ont/mi
 
 ```shell
 # get an interactive job on a node with A100 GPU and load singularity module
-bsub -q gpu-a100 -gpu "num=1:gmem=8000" -M 16G -n 4 -Is $SHELL
+bsub -q gpu-a100 -gpu "num=1:gmem=8000" -M 32G -n 4 -Is $SHELL
 module load singularity-3.8.7-gcc-11.2.0-jtpp6xx
 # enter container with mounting code etc.
 singularity shell --nv -B ../BR/BOSS-RUNS:/root/BOSS-RUNS --overlay overlay.img simION.sif
 alias l="ls -Flh --color" && alias les="less -S"
-./bin/micromamba shell init --shell bash --root-prefix=~/micromamba && eval "$(./bin/micromamba shell hook --shell bash -p ~/micromamba)" && micromamba activate readfish
+./bin/micromamba shell init --shell bash --root-prefix=~/micromamba && eval "$(./bin/micromamba shell hook --shell bash -p ~/micromamba)" 
+micromamba activate boss
 cd testing
 # launch playback
 bash ../code/01_playback/launch_playback.sh   
@@ -145,9 +127,7 @@ Bits that might change in the future and need to be checked:
 - ONT software stack: update installation commands in container build script
 - sequencing protocol: update in build script; change in code block of ONT configs; change in start_protocol_mod.py
 - sequencing kit: in launch_playback.sh; in start_protocol_mod.py
-- starting protocol from api: start_protocol.py from their examples. All changes in my version are marked with TODOs
-- readfish dependencies: update conda env in code block 
-- BOSS dependencies: update in code block here
+- starting protocol from api: start_protocol.py from their examples. All changes in my version are marked with TODOs 
 - path to bulkfile for playback: specified in ONT config code block
 - minknow_api: update the script to start sequencing - start_protocol_mod.py has hard-coded protocol
 
