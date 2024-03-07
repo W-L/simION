@@ -1,0 +1,13 @@
+[general]
+name = "runs"                   # experiment name
+wait = 30                       # waiting time between updates in live version
+ref = "/nfs/research/goldman/lukasw/simION/data/GRCh38_dna_sm_22.fa"
+mmi = "/nfs/research/goldman/lukasw/simION/data/GRCh38_dna_sm_22.fa.mmi"
+
+[live]
+device = "MS00000"                 # position on sequencer
+data_wait = 10                 # wait for X Mb data before first update
+
+[optional]
+reject_refs = ""
+temperature = 20                # max updates during which to consider fragments (higher number might decrease update speeds)
