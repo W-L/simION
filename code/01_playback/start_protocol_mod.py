@@ -663,7 +663,8 @@ def main():
         if not getattr(args, name):
             return None
         return protocols.OutputArgs(
-            reads_per_file=getattr(args, "%s_reads_per_file" % name)
+            reads_per_file=getattr(args, "%s_reads_per_file" % name, None),
+            batch_duration=getattr(args, "%s_batch_duration" % name, None),
         )
 
     fastq_arguments = build_output_arguments(args, "fastq")
