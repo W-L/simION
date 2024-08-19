@@ -4,7 +4,7 @@ sleep 5
 pkill dorado
 sleep 5
 
-/opt/ont/dorado/bin/dorado_basecall_server -x cuda:all -c /opt/ont/dorado/data/dna_r10.4.1_e8.2_400bps_5khz_fast.cfg -p ipc:///tmp/.guppy/5555 -l minknow_run/logs/dorado --verbose_logs &
+dorado_basecall_server -x cuda:all -c /opt/ont/dorado/data/dna_r10.4.1_e8.2_400bps_5khz_fast.cfg -p ipc:///tmp/.guppy/5555 -l minknow_run/logs/dorado --verbose_logs &
 sleep 5 && echo "Initiated basecall server"
 /opt/ont/minknow/bin/mk_manager_svc -c /opt/ont/minknow/conf --simulated-minion-devices=1 -d &
 sleep 10 && echo "Initiated minknow server"
