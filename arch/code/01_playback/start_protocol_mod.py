@@ -4,12 +4,17 @@ Example script to start a protocol
 Example usage might be:
 
 python ./python/minknow_api/examples/start_protocol.py \
-    --host localhost --position X1 \                        # Select which host + position will run a script
-    --sample-id "my_sample" --experiment-group "my_group" \ # Set sample id + experiment group
-    --experiment-duration 24 \                              # Set the run time of the experiment
-    --kit SQK-LSK109 \                                      # Specify which kit is being run
-    --basecalling \                                         # Enable basecalling
-    --fastq --bam                                           # Choose fastq + bam output options
+    --host localhost --position X1 \
+    --sample-id "my_sample" --experiment-group "my_group" \
+    --experiment-duration 24 \
+    --kit SQK-LSK109 \
+    --basecalling \
+    --fastq --bam
+
+This will start a protocol on position X1 of the local machine, with the sample ID set
+to "my_sample" and the run placed in the experiment group "my_group". It will be set to
+run for 24 hours. It will assume the sample was prepared using the SQK-LSK109 kit.
+Basecalling will be enabled, producing FASTQ and BAM output files.
 
 """  # noqa W605
 
@@ -192,54 +197,73 @@ def parse_args():
     parser.add_argument(
         "--fastq",
         action="store_true",
-        help="enables FastQ file output, defaulting to 4000 reads per file",
+        help="enables FastQ file output.",
     )
 
     parser.add_argument(
         "--fastq-reads-per-file",
         type=int,
-        default=4000,
         help="set the number of reads combined into one FastQ file.",
+    )
+
+    parser.add_argument(
+        "--fastq-batch-duration",
+        type=int,
+        help="Duration (in seconds) of a single fastq file batch; if set to 0, time-based batching is disabled",
     )
 
     parser.add_argument(
         "--fast5",
         action="store_true",
-        help="enables Fast5 file output, defaulting to 4000 reads per file, this will store raw, "
-        "fastq and trace-table data",
+        help="enables Fast5 file output, this will store raw, fastq and trace-table data.",
     )
 
     parser.add_argument(
         "--fast5-reads-per-file",
         type=int,
-        default=4000,
         help="set the number of reads combined into one Fast5 file.",
+    )
+
+    parser.add_argument(
+        "--fast5-batch-duration",
+        type=int,
+        help="Duration (in seconds) of a single fast5 file batch; if set to 0, time-based batching is disabled",
     )
 
     parser.add_argument(
         "--pod5",
         action="store_true",
-        help="enables Pod5 file output, defaulting to 4000 reads per file, this will store raw data.",
+        help="enables Pod5 file output, this will store raw data.",
     )
 
     parser.add_argument(
         "--pod5-reads-per-file",
         type=int,
-        default=4000,
         help="set the number of reads combined into one Pod5 file.",
+    )
+
+    parser.add_argument(
+        "--pod5-batch-duration",
+        type=int,
+        help="Duration (in seconds) of a single pod5 file batch; if set to 0, time-based batching is disabled",
     )
 
     parser.add_argument(
         "--bam",
         action="store_true",
-        help="enables BAM file output, defaulting to 4000 reads per file",
+        help="enables BAM file output.",
     )
 
     parser.add_argument(
         "--bam-reads-per-file",
         type=int,
-        default=4000,
-        help="set the number of reads combined into one BAM file.",
+        help="set the number of reads combined into one bam file.",
+    )
+
+    parser.add_argument(
+        "--bam-batch-duration",
+        type=int,
+        help="Duration (in seconds) of a single bam file batch; if set to 0, time-based batching is disabled",
     )
 
     # Read until
@@ -631,10 +655,6 @@ def main():
                 args.barcode_kits,
                 args.trim_barcodes,
                 args.barcodes_both_ends,
-                args.detect_mid_strand_barcodes,
-                args.min_score,
-                args.min_score_rear,
-                args.min_score_mid,
             )
 
         if args.alignment_reference:
@@ -663,7 +683,8 @@ def main():
         if not getattr(args, name):
             return None
         return protocols.OutputArgs(
-            reads_per_file=getattr(args, "%s_reads_per_file" % name)
+            reads_per_file=getattr(args, "%s_reads_per_file" % name, None),
+            batch_duration=getattr(args, "%s_batch_duration" % name, None),
         )
 
     fastq_arguments = build_output_arguments(args, "fastq")

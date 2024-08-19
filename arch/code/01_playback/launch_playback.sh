@@ -38,8 +38,8 @@ python3 ../code/01_playback/start_protocol_mod.py --position MS00000 --kit SQK-L
 sleep 2
 # this loops to wait until actual sequencing has started - takes a couple of minutes
 # PHASE INIT -> PHASE MUX_SCAN -> PHASE SEQUENCING
-python3 /nfs/research/goldman/lukasw/simION/code/01_playback/query_minknow_run.py
+python3 ../code/01_playback/query_minknow_run.py
 # finish by displaying the histogram of read lengths sequenced so far
-python3 /nfs/research/goldman/lukasw/simION/code/read_length_hist.py
+python3 ../code/read_length_hist.py
 # then the playback keeps running....
 
