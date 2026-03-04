@@ -42,14 +42,14 @@ print(current_info.output_path.split('/')[-1])
 print()
 
 
-#while True:
-current_info = c.protocol.get_current_protocol_run()
-cphase = phase_dict[current_info.phase]
-print(cphase)
-#    if cphase != "PHASE_SEQUENCING":
-#        sleep(10)
-#    else:
-#        sys.exit()
+while True:
+    current_info = c.protocol.get_current_protocol_run()
+    cphase = phase_dict[current_info.phase]
+    print(cphase)
+    if cphase != "PHASE_SEQUENCING":
+        sleep(10)
+    else:
+        sys.exit()
 
 
 
