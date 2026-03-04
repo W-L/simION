@@ -2,6 +2,7 @@ import minknow_api
 import numpy as np
 from google.protobuf.json_format import MessageToDict
 import argparse
+from minknow_api.manager import Manager
 
 
 def setup_parser():
@@ -16,7 +17,7 @@ def setup_parser():
 
 
 def connect2device(pos=0):
-    m = minknow_api.manager.Manager()
+    m = Manager()
     p = list(m.flow_cell_positions())[pos]
     c = p.connect()
     return c
