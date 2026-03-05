@@ -1,0 +1,28 @@
+# toml to enrich two chromosomes (chr 20 and 21) from the CHM human genome in a single region.
+# This region applies to all channels across the whole flowcell.
+
+[caller_settings.dorado]
+config = "dna_r10.4.1_e8.2_400bps_hac@v5.2.0||"
+# Address of the guppy/dorado basecaller - The default address for guppy is ipc:///tmp/.guppy/5555.
+address = "ipc:///tmp/.dorado/dorado-basecall-server.sock"
+debug_log = "live_reads.fq"
+
+[mapper_settings.mappy_rs]
+fn_idx_in = "data/CHM13v2.mmi"
+debug_log = "live_alignments.paf"
+n_threads = 8
+
+# This region will enrich for reads mapping to chr20 and chr21.
+[[regions]]
+name = "hum_test"
+min_chunks = 1 # minimum number of chunks before a decision can be made
+max_chunks = 4 # maximum number of chunks to use in decision making - after this perform the above_max_chunks action
+targets = ["NC_060944.1", "NC_060945.1"]  # Genomic targets for this region
+single_on = "stop_receiving"  # Action to take if there is one mapping on target.
+multi_on = "stop_receiving"   # Action to take if there is more than one mapping, with at least one target.
+single_off = "unblock"        # Action to take if there is one mapping and it is off target
+multi_off = "unblock"         # Action to take if there are multiple mappings, where all are off target.
+no_seq = "proceed"            # Action to take if there is no sequence information
+no_map = "proceed"            # Action to take if there is no mapping information
+above_max_chunks = "unblock"  # Action to take if the number of chunks received is above max_chunks
+below_min_chunks = "proceed"  # Action to take if the number of chunks received is below min_chunks
